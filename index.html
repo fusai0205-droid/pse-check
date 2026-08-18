@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="日本PSE认证免费自诊工具：品目判定（圆形/菱形）、检测报告有效性体检、新法合规自查。依据经济产业省2026年最新法规。">
+<title>JPSEA｜PSE合规自诊中心｜日本电气用品安全法 免费检查工具</title>
+<style>
+:root{
+  --navy:#0d2137;--navy2:#16324f;--blue:#1a5fb4;--blue-l:#eaf1fb;
+  --gold:#c9a227;--red:#c62828;--red-bg:#fdecea;--amber:#e65100;--amber-bg:#fff4e5;
+  --green:#1b7a3d;--green-bg:#e9f6ee;--ink:#1c2733;--muted:#5f6b78;--line:#e3e8ee;
+  --bg:#f4f6f9;--card:#ffffff;--radius:14px;
+  --shadow:0 2px 12px rgba(13,33,55,.07);--shadow-lg:0 8px 32px rgba(13,33,55,.13);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:680px;margin:0 auto;padding:0 18px}
+.hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 60%,#1d3f63 100%);color:#fff;padding:44px 0 0;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border:2px solid rgba(255,255,255,.06);border-radius:50%}
+.hero::before{content:"";position:absolute;right:-20px;top:40px;width:160px;height:160px;border:2px solid rgba(255,255,255,.08);border-radius:50%}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:26px}
+.brand .mark{width:40px;height:40px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--navy);font-size:13px;letter-spacing:.5px}
+.brand .bt b{display:block;font-size:15px;letter-spacing:.5px}
+.brand .bt span{font-size:11px;opacity:.65}
+.hero h1{font-size:27px;line-height:1.35;font-weight:800;letter-spacing:.3px}
+.hero h1 em{font-style:normal;color:#ffd76e}
+.hero .sub{margin-top:12px;font-size:14.5px;opacity:.85;max-width:520px}
+.hero .law{display:inline-flex;align-items:center;gap:6px;margin-top:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:6px 14px;border-radius:20px;font-size:12px}
+.hero .law i{width:7px;height:7px;background:#ffd76e;border-radius:50%;display:inline-block}
+.hbtns{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+.hbtn{flex:1;min-width:180px;text-align:center;padding:14px 18px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:transform .15s}
+.hbtn:active{transform:scale(.98)}
+.hbtn.b1{background:#fff;color:var(--navy)}
+.hbtn.b2{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(255,255,255,.12);margin-top:36px;border-radius:14px 14px 0 0;overflow:hidden;position:relative;z-index:1}
+.stat{background:rgba(255,255,255,.06);padding:16px 8px;text-align:center}
+.stat b{display:block;font-size:19px;color:#ffd76e;font-weight:800}
+.stat span{font-size:11px;opacity:.75;line-height:1.4;display:block;margin-top:2px}
+section{padding:38px 0 6px}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sec-num{font-size:13px;font-weight:800;color:var(--blue);background:var(--blue-l);padding:3px 12px;border-radius:14px;letter-spacing:1px}
+.sec-head h2{font-size:20px;font-weight:800}
+.sec-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.card{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.searchbox{position:relative}
+.searchbox svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:.4}
+input[type=text]{width:100%;padding:14px 14px 14px 44px;font-size:15px;border:1.5px solid var(--line);border-radius:12px;outline:none;transition:border .2s;background:#fafbfc}
+input[type=text]:focus{border-color:var(--blue);background:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{padding:7px 14px;background:var(--blue-l);color:var(--blue);border-radius:18px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.chip:hover{border-color:var(--blue)}
+.result{border-radius:12px;padding:18px;margin-top:16px;font-size:14px;display:none;animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.r-maru{background:var(--green-bg);border:1.5px solid var(--green)}
+.r-hishi{background:var(--red-bg);border:1.5px solid var(--red)}
+.r-check{background:var(--amber-bg);border:1.5px solid var(--amber)}
+.r-out{background:#eef1f4;border:1.5px solid #78909c}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:14px;color:#fff;font-size:13px;font-weight:800;margin-bottom:8px}
+.result .pname{font-size:16px;font-weight:800;margin-bottom:4px}
+.result .steps{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(0,0,0,.14);font-size:12.5px;color:#444}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:11.5px;color:var(--muted)}
+.legend i{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px}
+.dbnote{font-size:11.5px;color:var(--muted);margin-top:10px}
+.progress{height:6px;background:var(--line);border-radius:3px;margin-bottom:20px;overflow:hidden}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#4a8fdd);border-radius:3px;transition:width .3s ease;width:0}
+.qnum{font-size:12px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:6px}
+.qtext{font-size:16.5px;font-weight:800;margin-bottom:16px;line-height:1.5}
+.opt{display:block;padding:13px 16px;margin:10px 0;background:#f7f9fb;border:1.5px solid var(--line);border-radius:12px;font-size:14.5px;cursor:pointer;transition:all .15s}
+.opt:hover{border-color:var(--blue);background:var(--blue-l)}
+.wnav{display:flex;justify-content:space-between;margin-top:18px}
+.back{background:none;border:none;color:var(--muted);font-size:13.5px;cursor:pointer;padding:8px 4px}
+.back:disabled{opacity:0;pointer-events:none}
+.qcount{font-size:12px;color:var(--muted);align-self:center}
+.verdict{display:none;animation:fadeUp .4s ease}
+.gauge-wrap{text-align:center;padding:6px 0 2px}
+.gauge{width:170px;height:100px;margin:0 auto;position:relative}
+.gauge svg{width:170px;height:100px}
+.gauge .gv{position:absolute;bottom:0;left:0;right:0;font-size:15px;font-weight:800}
+.v-title{text-align:center;font-size:20px;font-weight:800;margin:8px 0 4px}
+.v-advice{text-align:center;font-size:13.5px;color:var(--muted);max-width:460px;margin:0 auto 16px}
+.gaps{background:#fafbfc;border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:8px}
+.gaps b{font-size:14px;display:block;margin-bottom:8px}
+.gap-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13.5px;line-height:1.55}
+.gap-item:last-child{border:none}
+.gap-item .gi{flex:none;width:22px;height:22px;border-radius:50%;background:var(--red-bg);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-top:2px}
+.vbtns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.vbtn{flex:1;min-width:150px;padding:12px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;text-align:center}
+.vbtn.share{background:var(--navy);color:#fff}
+.vbtn.redo{background:none;border:1.5px solid var(--line);color:var(--muted)}
+.flow{counter-reset:fs}
+.fstep{display:flex;gap:14px;padding:13px 0;border-bottom:1px dashed var(--line)}
+.fstep:last-child{border:none}
+.fstep .fn{counter-increment:fs;flex:none;width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.fstep .fn::before{content:counter(fs)}
+.fstep .ft b{font-size:14.5px;display:block}
+.fstep .ft span{font-size:12.5px;color:var(--muted)}
+.fstep .who{margin-left:auto;flex:none;font-size:11px;padding:3px 10px;border-radius:10px;align-self:center;font-weight:700}
+.w-c{background:var(--blue-l);color:var(--blue)}
+.w-f{background:var(--amber-bg);color:var(--amber)}
+.w-s{background:var(--green-bg);color:var(--green)}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden}
+summary{padding:15px 18px;font-size:14.5px;font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"＋";color:var(--blue);font-weight:400;font-size:17px;transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details .fa{padding:0 18px 16px;font-size:13.5px;color:#3a4652;line-height:1.75}
+.cta{background:linear-gradient(150deg,var(--navy),#1d3f63);border-radius:18px;padding:30px 24px;color:#fff;text-align:center;margin:34px 0 10px;box-shadow:var(--shadow-lg)}
+.cta h3{font-size:20px;font-weight:800;margin-bottom:8px}
+.cta p{font-size:13.5px;opacity:.85;max-width:440px;margin:0 auto}
+.cta .send{display:flex;gap:10px;justify-content:center;margin:16px 0 4px;flex-wrap:wrap}
+.cta .send span{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:6px 14px;border-radius:16px;font-size:12.5px}
+.qrbox{width:150px;height:150px;background:#fff;border-radius:12px;margin:14px auto 4px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.qrbox img{width:100%;height:100%;object-fit:contain}
+.qrbox .noqr{font-size:12px;color:#999;padding:10px;line-height:1.5}
+.wxbtn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;background:#fff;color:var(--navy);padding:13px 30px;border-radius:26px;font-weight:800;font-size:16px;cursor:pointer;border:none;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.cta .tiny{font-size:11px;opacity:.55;margin-top:12px}
+footer{font-size:11.5px;color:var(--muted);text-align:center;padding:26px 18px 40px;line-height:1.8}
+footer a{color:var(--blue);text-decoration:none}
+.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:11px 24px;border-radius:24px;font-size:14px;transition:transform .3s;z-index:99;box-shadow:var(--shadow-lg)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.modal{position:fixed;inset:0;background:rgba(13,33,55,.75);display:none;align-items:center;justify-content:center;z-index:98;padding:20px}
+.modal.show{display:flex}
+.modal .mbox{background:#fff;border-radius:16px;padding:18px;max-width:400px;width:100%;text-align:center;max-height:90vh;overflow:auto}
+.modal img{width:100%;border-radius:10px;border:1px solid var(--line)}
+.modal .mtip{font-size:13px;color:var(--muted);margin:10px 0 4px}
+.modal .mclose{margin-top:8px;background:var(--navy);color:#fff;border:none;padding:10px 28px;border-radius:20px;font-size:14px;cursor:pointer}
+@media(max-width:480px){.hero h1{font-size:23px}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="brand">
+      <div class="mark">PSE</div>
+      <div class="bt"><b>JPSEA · PSE合规自诊中心</b><span>Japan Product Safety & Electrical Agency</span></div>
+    </div>
+    <h1>你的产品，<em>能合法</em>在日本销售吗？</h1>
+    <p class="sub">面向亚马逊日本 / 乐天 / 雅虎卖家与出口制造商的免费合规自查。依据日本《电气用品安全法》及经济产业省最新技术基准（2026年6月版）编制。</p>
+    <div class="law"><i></i>2025年12月25日新法已生效：跨境直销卖家须备案＋选任国内管理人</div>
+    <div class="hbtns">
+      <a class="hbtn b1" href="#m1">① 查品目：圆形还是菱形</a>
+      <a class="hbtn b2" href="#m2">② 体检：我的报告有效吗</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>457</b><span>受管制品目</span></div>
+      <div class="stat"><b>116</b><span>特定电气用品<br>(菱形·高风险)</span></div>
+      <div class="stat"><b>1亿円</b><span>法人最高罚金</span></div>
+      <div class="stat"><b>0元</b><span>中文人工复核<br>最快6小时回复</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<section id="m1">
+  <div class="sec-head"><span class="sec-num">STEP 1</span><h2>品目自查</h2></div>
+  <p class="sec-sub">输入产品名称，判断属于 圆形〇（可自我确认）还是 菱形◇（须第三方检查机构）——报价前搞错这一步，整个认证白做。</p>
+  <div class="card">
+    <div class="searchbox">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input type="text" id="kw" placeholder="如：移动电源 / USB充电器 / 加湿器 / 电热毯…" oninput="search()">
+    </div>
+    <div class="chips" id="chips"></div>
+    <div id="r1" class="result"></div>
+    <div class="legend">
+      <span><i style="background:var(--green)"></i>圆形〇 可自我确认</span>
+      <span><i style="background:var(--red)"></i>菱形◇ 须官方注册检测机构</span>
+      <span><i style="background:var(--amber)"></i>存在分界陷阱</span>
+      <span><i style="background:#78909c"></i>多为对象外</span>
+    </div>
+    <p class="dbnote" id="dbnote"></p>
+  </div>
+</section>
+
+<section id="m2">
+  <div class="sec-head"><span class="sec-num">STEP 2</span><h2>报告与合规链体检</h2></div>
+  <p class="sec-sub">8 个问题，检查你的检测报告和合规链条是否经得起经产省与平台审查。约 60 秒。</p>
+  <div class="card">
+    <div id="wizard">
+      <div class="progress"><i id="pbar"></i></div>
+      <div id="qbox"></div>
+      <div class="wnav">
+        <button class="back" id="backBtn" onclick="goBack()">‹ 上一题</button>
+        <span class="qcount" id="qcount"></span>
+      </div>
+    </div>
+    <div id="verdict" class="verdict">
+      <div class="gauge-wrap">
+        <div class="gauge">
+          <svg viewBox="0 0 170 100">
+            <path d="M15 95 A 70 70 0 0 1 155 95" fill="none" stroke="#e3e8ee" stroke-width="14" stroke-linecap="round"/>
+            <path id="garc" d="M15 95 A 70 70 0 0 1 155 95" fill="none" stroke="#1b7a3d" stroke-width="14" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220"/>
+          </svg>
+          <div class="gv" id="gscore"></div>
+        </div>
+      </div>
+      <div class="v-title" id="vtitle"></div>
+      <p class="v-advice" id="vadvice"></p>
+      <div class="gaps" id="gaps"></div>
+      <div class="vbtns">
+        <button class="vbtn share" onclick="makeCard()">📤 保存结果卡片（可发群/朋友圈）</button>
+        <button class="vbtn redo" onclick="restart()">↺ 重新体检</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div class="sec-head"><span class="sec-num">FAQ</span><h2>高频疑问</h2></div>
+  <details><summary>花10万日元买的PSE报告，为什么可能是废纸？</summary><div class="fa">市面大量低价报告只做了 IEC 标准的杂音（EMC）检测。而经产省要求的基准符合检测必须包含：共通检查、个别检查、杂音检查、以及 <b>JIS↔IEC 差分</b>的确认与补测。只有杂音检测的报告，在经产省的认定中属于「基准符合检测未实施」——即无效。亚马逊书类审查只看"有没有文件"，但一旦被经产省核查或大客户尽调，无效报告等于裸奔。</div></details>
+  <details><summary>2025年12月的新法到底改了什么？</summary><div class="fa">《製品安全4法》修订于2025年12月25日施行：不经日本进口商、直接向日本消费者销售的海外卖家，被定义为<b>「特定輸入事業者」</b>，法律强制要求 ①完成政府备案(备案) ②产品符合技术基准 ③选任日本境内的<b>国内管理人</b>作为责任人。绝大多数跨境卖家尚未完成，属于合规缺口最大、也是被查风险上升最快的一环。</div></details>
+  
+  
+  <details><summary>我已经在卖了，还没做PSE，会怎样？</summary><div class="fa">风险分三层：①平台层——亚马逊对移动电源/适配器等品类主动书类审查，其余品类波浪式扫荡，被扫到即下架；②行政层——经产省可责令改善、公示企业名、责令回收；③刑事层——最高对法人1亿日元罚金、对个人1年以下有期徒刑或100万日元罚金。此外库存报废与listing权重清零的损失往往大于认证费用本身。建议在被审查前主动补链。</div></details>
+</section>
+
+<div class="card" style="margin-top:30px">
+  <b style="font-size:15px">🤝 我们是谁 · 为什么免费</b>
+  <p style="font-size:13.5px;color:#3a4652;margin-top:8px;line-height:1.8">本工具由 <b>JPSEA</b>（Japan Product Safety & Electrical Agency，驻日本东京）合规团队编制维护，依托累计500+件日本PSE支援实务经验，全程中文对接。<b>自查和人工复核都免费</b>——因为如果查出你的合规链有缺口，后续的检测、备案对接才是我们的业务。先把商业模式讲清楚，你再决定信不信。查出没问题的，我们恭喜你，一分钱不收。</p>
+</div>
+
+<div class="cta" id="cta">
+  <h3>免费人工复核 · 最快6小时回复</h3>
+  <p>自查只能发现问题，确认要靠专业。把<b>报告PDF＋产品照片（整机和铭牌各一张）</b>发到微信，JPSEA团队（累计500+件日本PSE项目）最快6小时给出人工结论。</p>
+  <div class="send">
+    <span>📄 检测报告 PDF</span><span>📷 产品照片(整机+铭牌)</span><span>🔗 产品销售链接</span>
+  </div>
+  <div class="qrbox" id="qrbox"><span class="noqr">（此处显示微信二维码<br>见文件顶部 CONFIG 配置）</span></div>
+  <button class="wxbtn" onclick="copyWx()">加微信：<span id="wxid"></span> 📋</button>
+  <p class="tiny">点击自动复制微信号 · 只回复诊断结论，不群发不推销 · 绝不向平台或任何机构披露你的信息</p>
+</div>
+
+<footer>
+  依据：<a href="https://www.meti.go.jp/policy/consumer/seian/denan/index.htm" target="_blank">経済産業省 電気用品安全法</a> ·
+  <a href="https://www.meti.go.jp/product_safety/tokuteiyunyu/tokuteiyunyu.html" target="_blank">特定輸入事業者制度</a> ·
+  技術基準省令解釈（2026年6月版）<br>
+  本工具为自查参考，不构成法律意见。品目判定与报告适法性以专业确认为准。<br>
+  © 2026 JPSEA · Japan Product Safety & Electrical Agency · 内容更新：2026-08
+</footer>
+</div>
+
+<div class="toast" id="toast">微信号已复制 ✓</div>
+<div class="modal" id="modal"><div class="mbox">
+  <img id="cardimg" alt="诊断结果卡片">
+  <p class="mtip">📱 手机：长按图片保存 → 发到卖家群/朋友圈<br>💻 电脑：右键另存为图片</p>
+  <button class="mclose" onclick="document.getElementById('modal').classList.remove('show')">关闭</button>
+</div></div>
+
+<script>
+/* ================================================================
+   ★ CONFIG —— Sai 只需要改这一个区块 ★
+   1. WECHAT_ID: 你的微信号
+   2. TOOL_URL: 部署后的网址（显示在分享卡片上）
+   3. WX_QR_BASE64: 微信二维码图片的 base64（可选）。
+      获取方法：微信-我-二维码名片-保存图片 → 在线转 base64（搜"图片转base64"）
+      → 把 "data:image/png;base64,xxxx" 整串粘进引号里
+   ================================================================ */
+const CONFIG = {
+  WECHAT_ID: "Wanjun77213",
+  TOOL_URL: "pse-check.vercel.app",
+  WX_QR_BASE64: ""
+};
+/* ================================================================ */
+
+// 渠道埋点：链接加 ?from=xhs / qun / 1688 / referral 可区分来源
+const FROM = new URLSearchParams(location.search).get('from') || 'direct';
+
+/* ============ 品目库（依据 経産省 施行令品目 + 技術基準解釈整理）============ */
+const DB=[
+// —— 充电/电源类 ——
+{n:"移动电源 / 充电宝",k:"移动电源 充电宝 power bank モバイルバッテリー",c:"maru",note:"锂离子蓄电池（体积能量密度≥400Wh/L）为圆形对象，2019年2月起强制。平台主动书类审查品类。",extra:"随附AC充电头=菱形（直流電源装置），须分开认证。"},
+{n:"锂离子电池 / 电芯",k:"锂电池 电芯 リチウムイオン 电池组",c:"maru",note:"体积能量密度≥400Wh/L的锂离子蓄电池=圆形对象。",extra:""},
+{n:"USB充电器 / AC适配器（插墙）",k:"充电器 适配器 电源适配器 ACアダプター adapter 快充头 氮化镓 gan pd充电器",c:"hishi",note:"「直流電源装置」＝特定电气用品（菱形），必须官方注册检测机构第三方检查。",extra:"最高频踩雷：主机圆形+充电头菱形，被打包按圆形报价就是坑。"},
+{n:"车载充电器（点烟器口）",k:"车载充电器 车充 カーチャージャー",c:"out",note:"DC-DC车充多不属电气用品对象（非AC电源）。",extra:"但车载逆变器（DC→AC100V）另判，可能受管制。"},
+{n:"逆变器 / 变压器",k:"逆变器 变压器 インバーター 変圧器 升压器",c:"check",note:"电压变换类设备按构造可能落入特定电气用品，必须逐型号专业判定。",extra:""},
+{n:"排插 / 延长线 / 智能插座",k:"排插 插线板 延长线 延長コード テーブルタップ 插座 智能插座 スマートプラグ",c:"hishi",note:"延長コードセット/配線器具类＝特定电气用品（菱形）。智能插座同属配線器具。",extra:""},
+{n:"电线 / 电源线",k:"电线 电源线 コード ケーブル 线材",c:"hishi",note:"電線类＝特定电气用品（菱形）。",extra:""},
+{n:"无线充电器",k:"无线充电 ワイヤレス充電 qi 磁吸充电",c:"check",note:"充电板与其适配器须分开判定，适配器多为菱形。",extra:""},
+// —— 照明类 ——
+{n:"LED台灯 / 室内灯具",k:"台灯 LED灯 デスクライト 吸顶灯 シーリングライト 灯具 照明 落地灯 氛围灯",c:"maru",note:"LED照明为圆形（光源応用機械器具）。",extra:"EMC须按J55015(H29)/CISPR15覆盖9kHz–30MHz磁场辐射，频段不足是高频整改项。"},
+{n:"装饰灯串 / LED灯带",k:"灯串 装饰灯 イルミネーション 圣诞灯 灯带 テープライト",c:"maru",note:"多为圆形光源応用器具，个别构造需确认。",extra:"低压灯带若靠AC适配器供电，适配器=菱形。"},
+{n:"紫外线杀菌灯",k:"紫外线 杀菌灯 消毒灯 UV殺菌",c:"check",note:"按构造判定，且UV安全另有要求，需专业确认。",extra:""},
+// —— 环境家电 ——
+{n:"加湿器",k:"加湿器 加湿机 香薰机 アロマディフューザー",c:"maru",note:"圆形（交流用電気機械器具）。",extra:""},
+{n:"空气净化器",k:"空气净化器 空気清浄機 净化器",c:"maru",note:"圆形。",extra:""},
+{n:"除湿机",k:"除湿机 除湿器 除湿機",c:"maru",note:"圆形。",extra:""},
+{n:"电风扇 / 循环扇（插电）",k:"风扇 电风扇 扇風機 循环扇 サーキュレーター",c:"maru",note:"AC插电风扇为圆形。",extra:""},
+{n:"手持小风扇 / 挂脖风扇（充电式）",k:"手持风扇 usb风扇 ハンディファン 挂脖风扇 首かけ",c:"check",note:"纯电池驱动本体可能不属对象，随附充电器/适配器多为菱形。",extra:"须按供电方式逐型号判定。"},
+{n:"电暖器 / 取暖器",k:"取暖器 电暖器 ヒーター ストーブ 暖风机 踢脚线 陶瓷加热",c:"maru",note:"多数家用電熱取暖器具为圆形，个别构造（储热式等）需确认。",extra:""},
+{n:"浴室暖风干燥机",k:"浴室暖风 干燥机 浴室乾燥",c:"check",note:"固定安装类须按品目细分判定。",extra:""},
+// —— 厨房家电 ——
+{n:"电热水壶",k:"电热水壶 电水壶 ケトル 電気ケトル 烧水壶 热水壶 咖啡手冲壶",c:"maru",note:"電気湯沸器为圆形（電熱器具）。",extra:""},
+{n:"咖啡机 / 磨豆机",k:"咖啡机 咖啡壶 コーヒーメーカー 磨豆机 コーヒーミル",c:"maru",note:"圆形（電熱/電動力応用機械器具）。",extra:"实战：关键部件（开关/EMI滤波器/磁环）须UL/ETL/CB证书或官方规格书。"},
+{n:"电饭煲 / 电磁炉 / 烤箱 / 空气炸锅",k:"电饭煲 电磁炉 烤箱 トースター 炊飯器 ホットプレート 空气炸锅 エアフライヤー 电煮锅 电火锅",c:"maru",note:"厨房電熱器具多为圆形。",extra:""},
+{n:"微波炉",k:"微波炉 電子レンジ",c:"maru",note:"圆形。",extra:""},
+{n:"榨汁机 / 破壁机 / 料理机",k:"榨汁机 破壁机 料理机 ミキサー ジューサー ブレンダー",c:"maru",note:"圆形（電動力応用機械器具）。",extra:""},
+{n:"面包机 / 酸奶机 / 煮蛋器",k:"面包机 酸奶机 煮蛋器 ホームベーカリー ヨーグルトメーカー",c:"maru",note:"圆形電熱器具。",extra:""},
+{n:"电蒸锅 / 加热饭盒",k:"电蒸锅 蒸蛋器 加热饭盒 弁当箱 スチーマー",c:"maru",note:"圆形電熱器具。",extra:""},
+{n:"洗碗机",k:"洗碗机 食洗機 食器洗い",c:"maru",note:"圆形。",extra:""},
+{n:"冰箱 / 冷柜",k:"冰箱 冷蔵庫 冷柜 冷凍庫",c:"maru",note:"圆形（電動力応用機械器具）。",extra:""},
+// —— 生活/清洁 ——
+{n:"吸尘器（插电）",k:"吸尘器 掃除機 除螨仪",c:"maru",note:"AC吸尘器为圆形。",extra:""},
+{n:"扫地机器人 / 无线吸尘器",k:"扫地机器人 ロボット掃除機 无线吸尘器 コードレス",c:"check",note:"电池驱动本体的对象性需个别判定；随附适配器多为菱形。",extra:""},
+{n:"洗衣机 / 干衣机",k:"洗衣机 洗濯機 干衣机 乾燥機",c:"maru",note:"圆形。",extra:""},
+{n:"挂烫机 / 电熨斗",k:"挂烫机 熨斗 アイロン スチーマー 衣類スチーマー",c:"maru",note:"圆形電熱器具。",extra:""},
+{n:"烘鞋器 / 被褥干燥机",k:"烘鞋器 布団乾燥機 被褥干燥",c:"maru",note:"圆形電熱器具。",extra:""},
+{n:"电动升降桌 / 电动家具",k:"升降桌 电动床 電動デスク 电动沙发",c:"check",note:"电机+适配器构成，须拆分判定。",extra:""},
+// —— 个护美容 ——
+{n:"卷发棒 / 直发器 / 吹风机",k:"卷发棒 直发器 吹风机 ヘアアイロン ドライヤー 美发",c:"maru",note:"美发電熱器具为圆形。",extra:""},
+{n:"理发器 / 剃毛器（充电式）",k:"理发器 バリカン 剃毛 脱毛器",c:"check",note:"充电式本体多不属对象；充电座/适配器另判。",extra:""},
+{n:"电动牙刷 / 剃须刀",k:"电动牙刷 剃须刀 シェーバー 歯ブラシ",c:"check",note:"充电式本体多不属对象；充电座/适配器另判（多为菱形）。",extra:""},
+{n:"美容仪",k:"美容仪 美顔器 洁面仪 射频仪 导入仪",c:"check",note:"按构造可能落入マッサージ器（菱形）或交流用機械器具（圆形），须个别判定。",extra:""},
+{n:"按摩仪 / 筋膜枪 / 按摩椅",k:"按摩器 按摩枪 マッサージ 筋膜枪 按摩椅 颈部按摩 マッサージチェア",c:"hishi",note:"「家庭用電気マッサージ器」＝特定电气用品（菱形）！充电式本体或不属对象但适配器另判。",extra:"此品类警惕圆形低价报价——做了也是无效认证。"},
+// —— 卧室/取暖贴身 ——
+{n:"电热毯 / 电热垫 / 暖脚器",k:"电热毯 電気毛布 电热垫 あんか 加热垫 暖脚",c:"hishi",note:"寝具类電熱器具＝特定电气用品（菱形），长时间接触人体风险高。",extra:""},
+{n:"电热服 / USB加热坐垫",k:"加热服 电热马甲 加热坐垫 ヒーターベスト",c:"check",note:"电池供电本体或不属对象；AC供电款和适配器另判。",extra:""},
+{n:"智能马桶盖",k:"马桶盖 温水便座 ウォシュレット 智能马桶",c:"hishi",note:"電気便座＝特定电气用品（菱形）。",extra:""},
+// —— 宠物/园艺/其他 ——
+{n:"宠物喂食器 / 宠物饮水机",k:"宠物 喂食器 饮水机 給餌器 ペット",c:"check",note:"多为DC适配器供电：本体对象性需判定，适配器多为菱形。",extra:""},
+{n:"鱼缸水泵 / 增氧泵",k:"水泵 鱼缸 水族 ポンプ 潜水泵 氧气泵",c:"hishi",note:"電気ポンプ＝特定电气用品（菱形）。",extra:""},
+{n:"鱼缸加热棒",k:"加热棒 观赏鱼 ヒーター 水族加热",c:"hishi",note:"観賞魚用ヒーター＝特定电气用品（菱形）。",extra:""},
+{n:"灭蚊灯 / 电蚊拍",k:"灭蚊灯 电蚊拍 電撃殺虫器 灭蚊",c:"hishi",note:"電撃殺虫器＝特定电气用品（菱形）。",extra:""},
+{n:"电热蚊香液",k:"蚊香 电蚊香 蚊取り",c:"maru",note:"电热蚊香器多为圆形電熱器具。",extra:""},
+{n:"电动工具",k:"电动工具 电钻 研磨机 電動工具 螺丝刀 打磨机 角磨机 电锯",c:"maru",note:"AC電動工具多为圆形（電動力応用）。充电式另判。",extra:""},
+// —— 电子设备（对象外为主）——
+{n:"蓝牙音箱 / 耳机 / 游戏机",k:"游戏机 音箱 蓝牙音箱 スピーカー 耳机 イヤホン switch",c:"out",note:"DC/电池供电电子设备本体多不属电气用品对象。",extra:"但随附AC适配器=菱形（直流電源装置），这才是要认证的部分。"},
+{n:"投影仪 / 显示器 / 路由器",k:"投影仪 プロジェクター 显示器 モニター 路由器 ルーター 摄像头",c:"check",note:"内置AC电源的设备可能属圆形（電子応用機械器具）；外置适配器款本体或对象外+适配器菱形。",extra:""},
+{n:"智能手表 / 电子秤 / 小电子",k:"智能手表 手表 电子秤 体重秤 温湿度计",c:"out",note:"电池供电小电子多不属对象。",extra:"充电底座若插AC则另判。"},
+// —— 商用/特殊 ——
+{n:"饮水机（制冷/制热）",k:"饮水机 ウォーターサーバー 管线机",c:"maru",note:"圆形（交流用電気機械器具）。",extra:""},
+{n:"商用设备（售货机/兑换机等）",k:"兑换机 自动售货 自動販売機 商用设备 贩卖机",c:"check",note:"自動販売機类＝特定电气用品（菱形）；其他商用设备按构造判定。",extra:"此类走部件证书(CDF)审查，周期较长。"},
+{n:"便携发电机 / 户外电源",k:"发电机 户外电源 ポータブル電源 発電機 储能",c:"check",note:"携帯発電機＝特定（菱形）；大容量户外储能多在圆形对象外但有例外。",extra:"分类争议多，必须专业判定。"}
+];
+const chips=["移动电源","USB充电器","LED台灯","电热毯","按摩枪","加湿器","智能马桶盖","排插","鱼缸加热棒","蓝牙音箱"];
+const chipBox=document.getElementById('chips');
+chips.forEach(c=>{const d=document.createElement('div');d.className='chip';d.textContent=c;d.onclick=()=>{document.getElementById('kw').value=c;search()};chipBox.appendChild(d)});
+document.getElementById('dbnote').textContent='当前品目库收录 '+DB.length+' 类常见跨境产品，覆盖高频陷阱品目；未收录品目请联系人工判定（共457品目）。';
+const CMAP={
+ maru:{cls:'r-maru',color:'#1b7a3d',label:'圆形 〇（非特定电气用品｜日语：丸型）',step:'路线：基准符合检测（安全＋杂音＋JIS差分）→ 事业备案 → 自主检查 → 贴〇PSE标志。可走自我确认，无须第三方机构。'},
+ hishi:{cls:'r-hishi',color:'#c62828',label:'菱形 ◇（特定电气用品｜高风险类）',step:'路线：必须经产省官方注册检测机构(官方注册检测机构)第三方适合性检查＋证书保存。流程严、费用高。若有人按圆形给你报价——那是无效认证。'},
+ check:{cls:'r-check',color:'#e65100',label:'需专业判定',step:'此品类存在 圆形/菱形/对象外 的分界陷阱，必须逐型号确认供电方式与构造后再定路线。'},
+ out:{cls:'r-out',color:'#607d8b',label:'多为对象外',step:'本体或不受管制，但随附电源部件（充电器/适配器）多受管制且常为菱形，须拆开判定。'}};
+function search(){
+  const q=document.getElementById('kw').value.trim().toLowerCase();
+  const r=document.getElementById('r1');
+  if(!q){r.style.display='none';return}
+  const hit=DB.find(d=>d.k.toLowerCase().includes(q)||d.n.toLowerCase().includes(q)||q.split(/\s+/).some(w=>w.length>1&&d.k.toLowerCase().includes(w)));
+  r.style.display='block';
+  if(!hit){r.className='result r-check';r.innerHTML='<span class="badge" style="background:#e65100">⚠ 未收录品目</span><div class="pname">'+document.getElementById('kw').value+'</div>该产品未在常见品目库中，可能属457品目的其他类别或对象外。<div class="steps"><b>建议：</b>发产品链接给我们，免费人工判定品目归属（见页尾）。</div>';return}
+  const m=CMAP[hit.c];
+  r.className='result '+m.cls;
+  r.innerHTML='<span class="badge" style="background:'+m.color+'">'+m.label+'</span><div class="pname">'+hit.n+'</div>'+hit.note+(hit.extra?'<br><b style="font-size:13px">⚠ '+hit.extra+'</b>':'')+'<div class="steps"><b>对应路线：</b>'+m.step+'</div>';
+}
+
+/* ============ 体检向导 ============ */
+const QS=[
+{t:"报告里有没有「安全项目」测试？（防触电、防起火：绝缘耐压/温升等——而不是只测了电磁干扰）",o:[["包含，报告里有这些项目",0],["不包含——只有杂音(EMC/噪声)检测",3],["不清楚报告里测了什么",2]],
+ miss:"安全检测缺失或不明：只有EMC杂音报告，在经产省认定中属「基准符合检测未实施」＝无效报告"},
+{t:"报告是否包含「杂音（EMC / 雑音）检测」？",o:[["包含",0],["不包含",2],["不清楚",1]],
+ miss:"杂音(EMC)检测缺失或不明——基准符合检测的法定组成部分"},
+{t:"报告封面/首页写的标准编号是哪种？",o:[["J 标准（J60335、J55014 等日本版）",0],["只有 IEC / EN / UL 等国际标准",2],["不清楚",1]],
+ miss:"仅按IEC/EN测试：未覆盖日本JIS差分部分，报告大概率不被认可"},
+{t:"报告有没有提到：与日本标准（JIS）的差异已确认/补测？（缺这项＝最常见的无效报告）",o:[["有明确说明",0],["没有",3],["不清楚",2]],
+ miss:"无JIS↔IEC差分确认——低价无效报告最常见的死穴"},
+{t:"是否已向经济产业省完成「政府备案（备案）」？",o:[["已备案（有日本主体或国内管理人代理）",0],["没有备案",3],["不知道还要备案",2]],
+ miss:"未完成政府备案(备案)——光有报告不能合法卖；开卖30日内为法定期限"},
+{t:"产品本体/铭牌上的「表示」是否完整？（〇PSE标志＋备案事业者名＋额定值）",o:[["三样齐全",0],["只有PSE圆圈标",2],["没有 / 不清楚",2]],
+ miss:"表示不完整：法定要求 〇PSE＋备案事业者名＋额定值 三要素齐全"},
+{t:"每批出货是否执行「自主检查」并保存记录？（外观 / 绝缘耐压 / 通电）",o:[["有做并留档",0],["没做 / 不知道这项义务",2]],
+ miss:"自主检查未实施或未留档——每台检查＋记录保存3年是法定义务"},
+{t:"你的销售方式是？",o:[["跨境直销（不经日本进口商，直接卖给日本消费者）",2],["有日本公司 / 经日本进口商销售",0]],
+ miss:"跨境直销＝新法「特定輸入事業者」：须备案＋选任国内管理人（2025年12月25日起施行）"}
+];
+let qi=0,answers=new Array(QS.length).fill(null),lastHealth=0,lastTitle='',lastMiss=[];
+function renderQ(){
+  const q=QS[qi];
+  document.getElementById('pbar').style.width=((qi)/QS.length*100)+'%';
+  document.getElementById('qcount').textContent=(qi+1)+' / '+QS.length;
+  document.getElementById('backBtn').disabled=qi===0;
+  let h='<div class="qnum">QUESTION '+(qi+1)+'</div><div class="qtext">'+q.t+'</div>';
+  q.o.forEach((o,j)=>{h+='<div class="opt" onclick="pick('+j+')">'+o[0]+'</div>'});
+  document.getElementById('qbox').innerHTML=h;
+}
+function pick(j){answers[qi]=j;qi++;if(qi<QS.length){renderQ()}else{showVerdict()}}
+function goBack(){if(qi>0){qi--;renderQ()}}
+function restart(){qi=0;answers.fill(null);document.getElementById('verdict').style.display='none';document.getElementById('wizard').style.display='block';renderQ()}
+function showVerdict(){
+  document.getElementById('wizard').style.display='none';
+  let s=0,miss=[];
+  QS.forEach((q,i)=>{const p=q.o[answers[i]][1];s+=p;if(p>=2)miss.push(q.miss)});
+  const max=QS.reduce((a,q)=>a+Math.max(...q.o.map(o=>o[1])),0);
+  const health=Math.max(0,Math.round((1-s/max)*100));
+  let color,title,advice;
+  if(s>=6){color='#c62828';title='🔴 高风险：合规链大概率是断的';advice='按现状销售，被平台审查或经产省核查时很可能被判不合规——下架、库存冻结、最高1亿日元罚金的风险真实存在。好消息是：缺口都可以补，大多数情况2-4周能补完整条链。先做免费人工复核，搞清楚缺哪几块再决定。'}
+  else if(s>=3){color='#e65100';title='🟠 中风险：存在明显缺口';advice='部分环节缺失或状态不明。在缺口补齐之前，谨慎扩大投放和备货。建议发报告做免费复核，明确到底缺哪几块。'}
+  else{color='#1b7a3d';title='🟢 低风险：主链路基本完整';advice='合规框架看起来健康。若想100%放心，可做一次免费报告适法性复核，重点确认 JIS 差分覆盖是否完整。'}
+  lastHealth=health;lastTitle=title;lastMiss=miss;
+  const v=document.getElementById('verdict');v.style.display='block';
+  document.getElementById('vtitle').textContent=title;
+  document.getElementById('vadvice').textContent=advice;
+  const arc=document.getElementById('garc');
+  arc.style.stroke=color;arc.style.transition='stroke-dashoffset 1s ease';
+  document.getElementById('gscore').innerHTML='合规健康度 <span style="font-size:22px;color:'+color+'">'+health+'</span> / 100';
+  setTimeout(()=>{arc.style.strokeDashoffset=220-(220*health/100)},60);
+  const g=document.getElementById('gaps');
+  g.innerHTML=miss.length?'<b>发现的缺口（'+miss.length+' 项）</b>'+miss.map((x,i)=>'<div class="gap-item"><span class="gi">'+(i+1)+'</span><span>'+x+'</span></div>').join(''):'<b>未发现重大缺口 ✓</b>';
+  v.scrollIntoView({behavior:'smooth',block:'start'});
+}
+renderQ();
+
+/* ============ 分享卡片（Canvas 生成图片）============ */
+function makeCard(){
+  const W=640,H=880,S=2;
+  const cv=document.createElement('canvas');cv.width=W*S;cv.height=H*S;
+  const x=cv.getContext('2d');x.scale(S,S);
+  // bg
+  const grd=x.createLinearGradient(0,0,W,H);grd.addColorStop(0,'#0d2137');grd.addColorStop(1,'#1d3f63');
+  x.fillStyle=grd;x.fillRect(0,0,W,H);
+  // decorative circles
+  x.strokeStyle='rgba(255,255,255,.07)';x.lineWidth=2;
+  x.beginPath();x.arc(W-40,60,120,0,7);x.stroke();
+  x.beginPath();x.arc(W-80,100,70,0,7);x.stroke();
+  // brand
+  x.fillStyle='#fff';x.fillRect(40,40,52,52);
+  x.fillStyle='#0d2137';x.font='800 16px sans-serif';x.textAlign='center';x.fillText('PSE',66,72);
+  x.textAlign='left';x.fillStyle='#fff';x.font='800 20px sans-serif';x.fillText('JPSEA · PSE合规自诊',108,62);
+  x.fillStyle='rgba(255,255,255,.6)';x.font='12px sans-serif';x.fillText('日本電気用品安全法 · 免费合规体检',108,84);
+  // date
+  const d=new Date();
+  x.fillStyle='rgba(255,255,255,.5)';x.font='12px sans-serif';x.textAlign='right';
+  x.fillText('诊断日期 '+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),W-40,62);
+  x.textAlign='left';
+  // score circle
+  const cx=W/2,cy=250,R=95;
+  x.strokeStyle='rgba(255,255,255,.15)';x.lineWidth=16;
+  x.beginPath();x.arc(cx,cy,R,-Math.PI/2,Math.PI*1.5);x.stroke();
+  const scoreColor=lastHealth>=70?'#5dca8a':(lastHealth>=40?'#ffb45e':'#ff6b6b');
+  x.strokeStyle=scoreColor;x.lineCap='round';
+  x.beginPath();x.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+Math.PI*2*(lastHealth/100));x.stroke();
+  x.fillStyle='#fff';x.font='800 56px sans-serif';x.textAlign='center';x.fillText(lastHealth,cx,cy+8);
+  x.fillStyle='rgba(255,255,255,.7)';x.font='14px sans-serif';x.fillText('合规健康度 / 100',cx,cy+38);
+  // title
+  x.fillStyle='#fff';x.font='800 24px sans-serif';x.fillText(lastTitle,cx,cy+R+55);
+  // gaps
+  x.textAlign='left';
+  let y=cy+R+95;
+  x.fillStyle='rgba(255,255,255,.85)';x.font='700 15px sans-serif';
+  x.fillText(lastMiss.length?('发现 '+lastMiss.length+' 项合规缺口：'):'主链路未发现重大缺口 ✓',48,y);
+  y+=28;
+  x.font='13px sans-serif';x.fillStyle='rgba(255,255,255,.72)';
+  lastMiss.slice(0,4).forEach((m,i)=>{
+    const short=m.split('——')[0].split('：')[0];
+    x.fillStyle=scoreColor;x.fillText('▎',48,y);
+    x.fillStyle='rgba(255,255,255,.72)';x.fillText((i+1)+'. '+short.slice(0,26),62,y);
+    y+=26;
+  });
+  if(lastMiss.length>4){x.fillText('… 及其他 '+(lastMiss.length-4)+' 项（完整报告加微信领取）',62,y);y+=26}
+  // divider
+  y=H-170;
+  x.strokeStyle='rgba(255,255,255,.15)';x.lineWidth=1;
+  x.beginPath();x.moveTo(48,y);x.lineTo(W-48,y);x.stroke();
+  // QR or wechat
+  if(CONFIG.WX_QR_BASE64){
+    const img=new Image();
+    img.onload=function(){
+      x.fillStyle='#fff';x.fillRect(W-160,y+18,112,112);
+      x.drawImage(img,W-156,y+22,104,104);
+      drawFooterText(x,y,W);finish(cv);
+    };
+    img.src=CONFIG.WX_QR_BASE64;
+  }else{
+    drawFooterText(x,y,W);finish(cv);
+  }
+}
+function drawFooterText(x,y,W){
+  x.textAlign='left';
+  x.fillStyle='#fff';x.font='800 18px sans-serif';
+  x.fillText('免费人工复核你的PSE报告',48,y+50);
+  x.fillStyle='rgba(255,255,255,.75)';x.font='14px sans-serif';
+  x.fillText('微信：'+CONFIG.WECHAT_ID+'（最快6小时回复）',48,y+80);
+  x.fillStyle='rgba(255,255,255,.45)';x.font='12px sans-serif';
+  x.fillText('自测入口：'+CONFIG.TOOL_URL,48,y+108);
+}
+function finish(cv){
+  const url=cv.toDataURL('image/png');
+  document.getElementById('cardimg').src=url;
+  document.getElementById('modal').classList.add('show');
+}
+
+/* ============ CTA ============ */
+document.getElementById('wxid').textContent=CONFIG.WECHAT_ID;
+if(CONFIG.WX_QR_BASE64){document.getElementById('qrbox').innerHTML='<img src="'+CONFIG.WX_QR_BASE64+'" alt="微信二维码">'}
+function copyWx(){
+  if(navigator.clipboard)navigator.clipboard.writeText(CONFIG.WECHAT_ID);
+  const t=document.getElementById('toast');t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
+}
+</script>
+</body>
+</html>
