@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PSE Bridge</title>
+<meta name="description" content="PSE Bridge｜东京。日本PSE报告出来之后、日本那一侧的事：卡单判断、日本出具整套报告（圆形品目）、届出与国内管理人对接。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: navy masthead with a product-nameplate (铭牌) as the hero object; below, a single reading column of plain sections; a who-does-what table is the trust core. */
+:root{
+  --ink:#0D2137;        /* brand navy: text in light, ground in dark */
+  --paper:#FBFAF7;      /* page ground */
+  --plate:#FFFFFF;      /* raised surfaces */
+  --muted:#5B6878;      /* secondary text, navy-biased grey */
+  --rule:#DCE1E7;       /* hairlines */
+  --gold:#A9861A;       /* brand gold, darkened for text contrast on light */
+  --gold-fill:#C9A227;  /* brand gold for marks and borders */
+  --mast:#0D2137;       /* masthead ground (navy in both themes) */
+  --mast-fg:#F3F1EA;
+  --mast-muted:#AAB6C4;
+  --stop:#B3261E;       /* "we don't do this" */
+  --display:"Noto Serif SC","Songti SC","STSong",serif;
+  --body:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#E9ECEF; --paper:#0A1828; --plate:#10233A; --muted:#9AA8B8; --rule:#22384F;
+    --gold:#D9B649; --gold-fill:#C9A227; --mast:#071321; --mast-fg:#F3F1EA; --mast-muted:#93A3B5;
+    --stop:#F2867D; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#E9ECEF; --paper:#0A1828; --plate:#10233A; --muted:#9AA8B8; --rule:#22384F;
+  --gold:#D9B649; --gold-fill:#C9A227; --mast:#071321; --mast-fg:#F3F1EA; --mast-muted:#93A3B5;
+  --stop:#F2867D; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--gold-fill);outline-offset:3px;border-radius:2px}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.3}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+
+/* masthead */
+.mast{background:var(--mast);color:var(--mast-fg)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:18px;flex-wrap:wrap}
+.brand{font-family:var(--mono);font-weight:500;letter-spacing:.06em;color:var(--gold-fill);font-size:15px;text-decoration:none}
+.brand span{color:var(--mast-muted);font-weight:400}
+.top nav{display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
+.top nav a{color:var(--mast-muted);text-decoration:none}
+.top nav a:hover{color:var(--mast-fg)}
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:48px;align-items:center;padding-block:40px 64px}
+.hero h1{font-size:clamp(32px,5.2vw,52px);font-weight:900;letter-spacing:.01em}
+.hero h1 em{font-style:normal;color:var(--gold-fill)}
+.hero .lede{margin-top:20px;color:var(--mast-muted);font-size:17px;max-width:34em}
+.hero .lede b{color:var(--mast-fg);font-weight:600}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{font:inherit;font-size:15px;border-radius:6px;padding:11px 18px;cursor:pointer;border:1px solid var(--gold-fill);display:inline-flex;align-items:center;gap:10px}
+.btn-solid{background:var(--gold-fill);color:#0D2137;font-weight:600}
+.btn-line{background:transparent;color:var(--mast-fg)}
+.btn code{font-family:var(--mono);font-size:14px}
+.btn:hover{filter:brightness(1.06)}
+.toast{font-family:var(--mono);font-size:12px;color:var(--gold-fill);min-height:18px;margin-top:10px}
+
+/* nameplate */
+.plate{background:#F4F2EC;color:#0D2137;border-radius:10px;padding:22px 22px 18px;font-family:var(--mono);font-size:13px;line-height:1.6;box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 18px 40px rgba(0,0,0,.35);position:relative;max-width:100%}
+.plate::before,.plate::after{content:"";position:absolute;top:12px;width:9px;height:9px;border-radius:50%;background:#C9CDD3;box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
+.plate::before{left:12px}.plate::after{right:12px}
+.plate-head{display:flex;align-items:center;gap:14px;border-bottom:1px solid #0D2137;padding-bottom:12px;margin-bottom:10px}
+.mark{width:46px;height:46px;border:2px solid #0D2137;border-radius:50%;display:grid;place-items:center;font-weight:500;font-size:13px;flex:none}
+.plate-head div{font-size:12px;line-height:1.4}
+.plate-head strong{display:block;font-size:14px}
+.plate dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0}
+.plate dt{color:#5B6878}
+.plate dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.plate dd.check{color:#8A6D10;font-weight:500}
+.plate-foot{margin-top:12px;padding-top:10px;border-top:1px dashed #9AA6B4;font-family:var(--body);font-size:13px;color:#33465C}
+
+/* sections */
+section{padding-block:64px;border-top:1px solid var(--rule)}
+section:first-of-type{border-top:0}
+.sec-head{display:grid;gap:10px;margin-bottom:28px;max-width:40em}
+.sec-head h2{font-size:clamp(24px,3.4vw,32px);font-weight:900}
+.sec-head p{color:var(--muted)}
+.cases{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.case{padding-top:16px;border-top:3px solid var(--gold-fill);display:grid;gap:8px;align-content:start}
+.case h3{font-size:19px}
+.case p{color:var(--muted);font-size:15px}
+
+.svc{display:grid;gap:0;border:1px solid var(--rule);border-radius:10px;background:var(--plate);overflow:hidden}
+.svc-row{display:grid;grid-template-columns:minmax(0,14em) minmax(0,1fr) minmax(0,12em);gap:24px;padding:22px 24px;border-top:1px solid var(--rule);align-items:start}
+.svc-row:first-child{border-top:0}
+.svc-row h3{font-size:18px}
+.svc-row p{color:var(--muted);font-size:15px}
+.svc-row .who{font-family:var(--mono);font-size:12px;color:var(--gold);letter-spacing:.04em}
+
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;counter-reset:s}
+.steps li{counter-increment:s;display:grid;gap:8px;align-content:start}
+.steps li::before{content:counter(s);font-family:var(--mono);font-size:13px;width:30px;height:30px;border:1px solid var(--gold-fill);color:var(--gold);border-radius:50%;display:grid;place-items:center}
+.steps h3{font-size:17px}
+.steps p{color:var(--muted);font-size:15px}
+
+.tbl-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:10px;background:var(--plate)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:15px}
+th,td{text-align:left;padding:14px 18px;border-top:1px solid var(--rule);vertical-align:top}
+thead th{border-top:0;font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:500;text-transform:uppercase}
+tbody th{font-weight:600}
+tr.me td,tr.me th{background:color-mix(in srgb,var(--gold-fill) 10%,transparent)}
+.note{margin-top:14px;font-size:14px;color:var(--muted);max-width:44em}
+
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px}
+.nolist{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.nolist li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px}
+.nolist li::before{content:"×";font-family:var(--mono);color:var(--stop);font-weight:500}
+.nolist b{display:block}
+.nolist span{color:var(--muted);font-size:15px}
+.peer{border:1px solid var(--gold-fill);border-radius:10px;padding:24px;display:grid;gap:12px;align-content:start;background:var(--plate)}
+.peer h3{font-size:20px}
+.peer p{color:var(--muted);font-size:15px}
+
+.reads{list-style:none;padding:0;margin:0;display:grid;gap:0;border-top:1px solid var(--rule)}
+.reads li{border-bottom:1px solid var(--rule)}
+.reads a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;padding:16px 4px;text-decoration:none;align-items:baseline}
+.reads a:hover .t{color:var(--gold)}
+.reads .t{font-size:16px}
+.reads .src{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+
+.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+.about p{max-width:34em}
+.about p+p{margin-top:14px}
+.facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 18px;margin:0;font-size:15px}
+.facts dt{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em;padding-top:3px}
+.facts dd{margin:0;min-width:0;overflow-wrap:anywhere}
+
+.contact{background:var(--mast);color:var(--mast-fg);padding-block:56px}
+.contact h2{font-size:clamp(24px,3.4vw,32px);font-weight:900}
+.contact .lede{color:var(--mast-muted);margin-top:12px;max-width:36em}
+.chans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}
+.chan{border:1px solid rgba(201,162,39,.45);border-radius:10px;padding:18px;display:grid;gap:10px;align-content:start;min-width:0}
+.chan .k{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--mast-muted)}
+.chan .v{font-family:var(--mono);font-size:16px;color:var(--mast-fg);overflow-wrap:anywhere;user-select:all}
+.chan button,.chan a.go{justify-self:start;font:inherit;font-size:14px;background:transparent;color:var(--gold-fill);border:1px solid var(--gold-fill);border-radius:6px;padding:6px 12px;cursor:pointer;text-decoration:none}
+footer{background:var(--mast);color:var(--mast-muted);font-size:13px;padding-block:20px 28px;border-top:1px solid rgba(255,255,255,.08)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:36px;padding-block:24px 48px}
+  .cases,.steps,.chans{grid-template-columns:minmax(0,1fr)}
+  .svc-row{grid-template-columns:minmax(0,1fr);gap:8px}
+  .two,.about{grid-template-columns:minmax(0,1fr)}
+  section{padding-block:48px}
+}
+@media (min-width:600px) and (max-width:860px){
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:no-preference){
+  .btn,.reads a .t{transition:filter .15s,color .15s}
+}
+</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<div class="mast">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="#top">PSE Bridge <span>｜ 东京</span></a>
+      <nav aria-label="页面导航">
+        <a href="#cases">卡在哪</a>
+        <a href="#services">做什么</a>
+        <a href="#roles">谁来做</a>
+        <a href="#peers">同行合作</a>
+        <a href="#about">关于</a>
+        <a href="#contact">联系</a>
+      </nav>
+    </div>
+    <div class="hero" id="top">
+      <div>
+        <p class="eyebrow">日本PSE · 报告出来之后的那一侧</p>
+        <h1 style="margin-top:14px">日本PSE卡住的单子，<br><em>日本这一侧</em>我来跟</h1>
+        <p class="lede">报告被亚马逊、乐天退回，日本进口商说不认，或者卡在经产省届出和国内管理人。把<b>报告首页或平台邮件截图</b>发来，<b>1 个工作日内</b>说清卡在哪、走哪条路。</p>
+        <div class="cta">
+          <button class="btn btn-solid" type="button" data-copy="Achuan2030" id="cta-wechat">复制微信 <code>Achuan2030</code></button>
+          <button class="btn btn-line" type="button" data-copy="pse.bridge.jp@gmail.com" id="cta-mail">复制邮箱</button>
+        </div>
+        <p class="toast" id="toast" role="status" aria-live="polite"></p>
+      </div>
+      <figure class="plate" aria-label="铭牌示意：这几栏要和届出一致" style="margin:0">
+        <div class="plate-head">
+          <div class="mark" aria-hidden="true">PSE</div>
+          <div><strong>充電式ハンディライト</strong>型式 XX-2026</div>
+        </div>
+        <dl>
+          <dt>定格</dt><dd>DC 5V 2A</dd>
+          <dt>届出事業者</dt><dd class="check">○○ Co., Ltd. ← 与届出一致</dd>
+          <dt>国内管理人</dt><dd class="check">○○株式会社 ← 与委托合同一致</dd>
+          <dt>製造</dt><dd>2026年 中国製</dd>
+        </dl>
+        <figcaption class="plate-foot">铭牌示意。平台审核看的不只是报告：铭牌、届出、国内管理人、亚马逊 ASIN 里的两栏，名字要全部对得上。</figcaption>
+      </figure>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+  <section id="cases" aria-labelledby="h-cases">
+    <div class="sec-head">
+      <p class="eyebrow">常见卡点</p>
+      <h2 id="h-cases">这三种情况，可以交给日本这一侧</h2>
+    </div>
+    <div class="cases">
+      <div class="case">
+        <h3>报告被退回，或日本客户不认</h3>
+        <p>平台要补材料、说"资料不适切"，或日本进口商拿到报告后不收货。多数时候不是产品不合格，而是报告缺了一块，或名义对不上。</p>
+      </div>
+      <div class="case">
+        <h3>只有 CB / IEC 报告，或只做了 EMC</h3>
+        <p>缺日本差异项，或者安全、电磁兼容只有其中一半。能不能只补差异项，要看原报告，不一定整套重做。</p>
+      </div>
+      <div class="case">
+        <h3>报告没问题，卡在日本侧手续</h3>
+        <p>经产省事业届出、国内管理人，或乐天审查商材要的三样材料：国内管理人委任状、届出控え、适合证明书。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" aria-labelledby="h-svc">
+    <div class="sec-head">
+      <p class="eyebrow">服务</p>
+      <h2 id="h-svc">做什么</h2>
+      <p>只做圆形 PSE 品目。费用按型号和情况一对一报价，不在页面上公开。</p>
+    </div>
+    <div class="svc">
+      <div class="svc-row">
+        <h3>卡单判断</h3>
+        <p>看报告首页、平台邮件和铭牌照片，判断卡在哪：补日本差异项、日本出具整套，还是只差手续。菱形品目会直接说明不接。</p>
+        <p class="who">1 个工作日内答复</p>
+      </div>
+      <div class="svc-row">
+        <h3>日本出具整套报告</h3>
+        <p>检测、报告、适合证明和 PSE 标志文件，由东京的合作方出具、盖章。适合还没有有效报告、或原报告补不了的卖家。</p>
+        <p class="who">圆形品目 · 按型号</p>
+      </div>
+      <div class="svc-row">
+        <h3>日本侧手续落地</h3>
+        <p>已经有报告的，帮你把日本这一侧接上：对接行政书士办理经产省届出、对接国内管理人、整理平台要的材料，全程中文沟通和进度跟进。</p>
+        <p class="who">按次</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="flow" aria-labelledby="h-flow">
+    <div class="sec-head">
+      <p class="eyebrow">流程</p>
+      <h2 id="h-flow">转过来之后怎么走</h2>
+    </div>
+    <ol class="steps">
+      <li><h3>发材料</h3><p>报告首页、平台邮件截图、整机和铭牌照片，说明卖在哪个平台。客户信息可以打码。</p></li>
+      <li><h3>判断卡点</h3><p>1 个工作日内答复：卡在哪、走哪条路、大概要多久。</p></li>
+      <li><h3>确认方案</h3><p>按型号报价，确认后开始。不需要的东西不会让你多做。</p></li>
+      <li><h3>交付和跟进</h3><p>报告、届出、国内管理人各由对应的一方完成，我负责把进度和材料对齐，直到能交给平台。</p></li>
+    </ol>
+  </section>
+
+  <section id="roles" aria-labelledby="h-roles">
+    <div class="sec-head">
+      <p class="eyebrow">分工</p>
+      <h2 id="h-roles">谁来做什么</h2>
+      <p>日本的手续各有法定的承办方。每一项由谁负责，先写清楚。</p>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th scope="col">事项</th><th scope="col">由谁负责</th><th scope="col">说明</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">检测报告出具、盖章</th><td>东京的合作方</td><td>日本这边出具，适用圆形品目</td></tr>
+          <tr><th scope="row">经产省事业届出</th><td>日本行政书士</td><td>向官公署提交的文件由行政书士制作，费用由客户直接支付给行政书士</td></tr>
+          <tr><th scope="row">国内管理人</th><td>在日本有住所的法人或个人</td><td>没有日本公司的海外事业者需要选任；客户直接签约付费，我协助对接</td></tr>
+          <tr class="me"><th scope="row">判断卡点、中文对接、资料整理、进度</th><td>PSE Bridge（Sai）</td><td>从第一次看材料到交给平台，全程同一个人对接</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">2025 年 12 月 25 日起，没有日本公司、直接向日本消费者销售的海外事业者，要以「特定输入事业者」身份届出并选任国内管理人。</p>
+  </section>
+
+  <section id="peers" aria-labelledby="h-peers">
+    <div class="two">
+      <div>
+        <div class="sec-head" style="margin-bottom:20px">
+          <p class="eyebrow">边界</p>
+          <h2 id="h-peers">不做的事</h2>
+        </div>
+        <ul class="nolist">
+          <li><div><b>菱形品目不接</b><span>AC 适配器等特定电气用品，需要登録検査機関出证，会直接说明并建议去处。</span></div></li>
+          <li><div><b>不承诺审核结果</b><span>亚马逊、乐天和经产省的审核由对方决定，我负责把材料做对、把卡点说清。</span></div></li>
+          <li><div><b>不代做官公署文件</b><span>届出书等提交文件由行政书士制作，我做中文对接和资料整理。</span></div></li>
+        </ul>
+      </div>
+      <div class="peer">
+        <p class="eyebrow">检测所 · 认证代办</p>
+        <h3>同行合作：不抢你的单子</h3>
+        <p>国内检测照常是你做。客户卡在日本那一侧、或你那边出不了日本版的部分，转给我；每单有返点，客户付款后结算，细则一对一发。</p>
+        <p>反过来，我这边只要国内报告的客户、或菱形品目的客户，也转给你。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="reads" aria-labelledby="h-reads">
+    <div class="sec-head">
+      <p class="eyebrow">公开写过的</p>
+      <h2 id="h-reads">先看看我怎么讲这些事</h2>
+      <p>在知无不言写的长帖，可以判断思路靠不靠谱。</p>
+    </div>
+    <ul class="reads">
+      <li><a href="https://www.wearesellers.com/question/125096" target="_blank" rel="noopener"><span class="t">没有日本公司，怎么在日本亚马逊卖带电产品？PSE + 备案 + 国内管理人按顺序讲清（2026 版）</span><span class="src">知无不言</span></a></li>
+      <li><a href="https://www.wearesellers.com/question/125272" target="_blank" rel="noopener"><span class="t">同样叫日本PSE报告，为什么有的几千元、有的十几万日元？差在这 4 处</span><span class="src">知无不言</span></a></li>
+      <li><a href="https://www.wearesellers.com/question/125309" target="_blank" rel="noopener"><span class="t">日本站换主体，只改后台公司名不够：PSE 这 4 样也要跟着换</span><span class="src">知无不言</span></a></li>
+      <li><a href="https://www.wearesellers.com/question/124960" target="_blank" rel="noopener"><span class="t">PSE 新规实施 9 个月：日本站备案办完了，5 分钟自查有没有白办</span><span class="src">知无不言</span></a></li>
+      <li><a href="https://www.wearesellers.com/question/124995" target="_blank" rel="noopener"><span class="t">卖充电宝到日本的注意：2027 年 3 月起要换一种 PSE 标了</span><span class="src">知无不言</span></a></li>
+    </ul>
+  </section>
+
+  <section id="about" aria-labelledby="h-about">
+    <div class="about">
+      <div>
+        <div class="sec-head" style="margin-bottom:20px">
+          <p class="eyebrow">关于</p>
+          <h2 id="h-about">PSE Bridge 是谁</h2>
+        </div>
+        <p>PSE Bridge 是 Sai 在东京运营的业务品牌，以个人事业形式经营。</p>
+        <p>我在日本读完硕士，之后一直在东京工作和生活。和日本这边的出具方、行政书士、国内管理人都是直接用日语沟通，再把结论用中文讲给卖家和同行听。</p>
+        <p>做这件事的原因很简单：很多中国卖家的报告在国内已经花了钱，却卡在日本这一侧的最后一段。这一段在日本，由人在日本的人来跟，最省事。</p>
+      </div>
+      <dl class="facts" aria-label="基本信息">
+        <dt>品牌</dt><dd>PSE Bridge</dd>
+        <dt>所在地</dt><dd>日本 · 东京</dd>
+        <dt>形式</dt><dd>个人事业</dd>
+        <dt>负责人</dt><dd>Sai（全程对接）</dd>
+        <dt>范围</dt><dd>日本 PSE 圆形品目；届出、国内管理人对接</dd>
+        <dt>语言</dt><dd>中文 · 日本語</dd>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<div class="contact" id="contact">
+  <div class="wrap">
+    <p class="eyebrow">联系</p>
+    <h2 style="margin-top:10px">发一张报告首页过来就行</h2>
+    <p class="lede">加微信时备注「公司名 + 品类」。1 个工作日内答复。</p>
+    <div class="chans">
+      <div class="chan">
+        <p class="k">微信</p>
+        <p class="v" id="v-wechat">Achuan2030</p>
+        <button type="button" data-copy="Achuan2030" id="copy-wechat">复制</button>
+      </div>
+      <div class="chan">
+        <p class="k">邮箱</p>
+        <p class="v" id="v-mail">pse.bridge.jp@gmail.com</p>
+        <button type="button" data-copy="pse.bridge.jp@gmail.com" id="copy-mail">复制</button>
+      </div>
+      <div class="chan">
+        <p class="k">在线自查</p>
+        <p class="v" style="font-size:14px">先自己查一遍报告</p>
+        <a class="go" href="https://fusai0205-droid.github.io/pse-check/" target="_blank" rel="noopener">打开自查工具</a>
+      </div>
+    </div>
+    <p class="toast" id="toast2" role="status" aria-live="polite"></p>
+  </div>
+</div>
+<footer>
+  <div class="wrap"><span>PSE Bridge · 东京</span><span>© 2026 · 不承诺平台和经产省的审核结果</span></div>
+</footer>
+
+<script>
+(function(){
+  function say(el,msg){ if(!el) return; el.textContent=msg; clearTimeout(el._t); el._t=setTimeout(function(){el.textContent='';},2600); }
+  function selectText(id){ var n=document.getElementById(id); if(!n) return; var r=document.createRange(); r.selectNodeContents(n); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r); }
+  document.querySelectorAll('[data-copy]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var text=b.getAttribute('data-copy');
+      var inContact=!!b.closest('.chan');
+      var out=document.getElementById(inContact?'toast2':'toast');
+      var fallbackId=text.indexOf('@')>-1?'v-mail':'v-wechat';
+      try{
+        navigator.clipboard.writeText(text).then(function(){ say(out,'已复制：'+text); },function(){ selectText(fallbackId); say(out,'已选中，长按或 Ctrl+C 复制：'+text); });
+      }catch(e){ selectText(fallbackId); say(out,'已选中，长按或 Ctrl+C 复制：'+text); }
+    });
+  });
+})();
+</script>
+</body>
+</html>
